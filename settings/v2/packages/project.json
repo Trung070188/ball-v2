@@ -1,0 +1,25 @@
+{
+  "__version__": "1.0.6",
+  "layer": [
+    {
+      "name": "Default",
+      "value": 1
+    },
+    {
+      "name": "ballInUp",
+      "value": 2
+    },
+    {
+      "name": "ballInBounce",
+      "value": 4
+    }
+  ],
+  "general": {
+    "designResolution": {
+      "width": 640,
+      "height": 960,
+      "fitHeight": true,
+      "fitWidth": false
+    }
+  }
+}

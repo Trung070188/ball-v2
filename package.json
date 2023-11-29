@@ -1,0 +1,13 @@
+{
+  "name": "ballver2",
+  "uuid": "5707358a-2b28-4911-a8f0-f7fe2e5c5903",
+  "creator": {
+    "version": "3.8.1",
+    "registry": {
+      "remote": {}
+    },
+    "dependencies": {
+      "plugin-import-2x": "1.1.10"
+    }
+  }
+}
