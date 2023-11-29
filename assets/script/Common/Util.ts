@@ -13,11 +13,28 @@ export default class Util {
 //   * @param node 节点
 //   * @param groupName 分组名称
 //   */
-  static changeGroup(node: Node, groupName: string) {
-        // node.active = false
-        // node.group = groupName
-        // node.active = true
+static changeGroup(node: Node, groupName: string) {
+  node.active = false;
+
+  // Assuming you have a mapping of group names to layer names
+  let layerName = this.mapGroupNameToLayerName(groupName);
+  if (layerName) {
+      let layerMask = Layers.Enum[layerName];
+      if (layerMask !== undefined) {
+          node.layer = layerMask;
+      }
   }
+
+  node.active = true;
+}
+static mapGroupNameToLayerName(groupName: string): string | null {
+  switch (groupName) {
+      case 'group1': return 'LAYER_NAME_1'; 
+      case 'group2': return 'LAYER_NAME_2';
+      // Add more cases as needed
+      default: return null;
+  }
+}
 }
 
 

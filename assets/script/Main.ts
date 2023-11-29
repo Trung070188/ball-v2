@@ -1,4 +1,4 @@
-import { _decorator, Component, EventTouch, Input, input, instantiate, Label, Prefab, resources, tween, UITransform, Vec3 } from 'cc';
+import { _decorator, assetManager, Component, director, EventTouch, Input, input, instantiate, Label, Prefab, resources, tween, UITransform, Vec3, view, Node, Layers } from 'cc';
 const {ccclass, property} = _decorator;
 
 import Game from "./Common/Game";
@@ -14,47 +14,31 @@ export default class Main extends Component {
     scoreLabel: Label | null = null
     ballArr: Ball[] = []
     barrierArr: Barrier[] = []
-    barrierPrefabArr: Prefab[] = []
+    barrierPrefabArr: Prefab[] = [];
+    @property({type: Prefab})
     ballPrefab: Prefab | null = null
     isBouncing: boolean = false
     score: number = 0
     onLoad () {
-        // this.initGameData()
+        this.initGameData()
     }
-   async initGameData() {
+    async initGameData() {
         try {
-            this.barrierPrefabArr = await this.loadResDirAsync('barrierPrefab');
-            this.addBarrier();
-            this.addTouchEvent();
+            // const barrierBundle = await assetManager.loadBundle('barrierPrefab');
+            // const barrierAssets = await barrierBundle.load('barrierPrefab');
+            // this.barrierPrefabArr = barrierAssets as Prefab[];
+            // this.addBarrier();
+            // this.addTouchEvent();
     
-            this.ballPrefab = await this.loadResAsync('ball');
+            // const ballBundle = await assetManager.loadBundle('ball');
+            // const ballPrefab = await ballBundle.load('ball');
+            // this.ballPrefab = ballPrefab as Prefab;
             this.initBall();
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
         }
     }
-    loadResDirAsync(dirPath) {
-        return new Promise((resolve, reject) => {
-            resources.loadDir(dirPath, (err, assets) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(assets);
-                }
-            });
-        });
-    }
-    loadResAsync(resPath) {
-        return new Promise((resolve, reject) => {
-            resources.load(resPath, (err, prefab) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(prefab);
-                }
-            });
-        });
-    }
+    
     shoot(pos) {
         this.ballArr.forEach((ball, i) => {
         ball.closePhy()
@@ -72,12 +56,20 @@ export default class Main extends Component {
         })
     }
     initBall() {
-        let ball = instantiate(this.ballPrefab).getComponent(Ball)
-        this.node.addChild(ball.node)
-        ball.node.position = CONSTS.ORIGIN_BALL_POS
-        Util.changeGroup(ball.node, BALL_STATUS.UP)
-        ball.closePhy()
-        this.ballArr.push(ball)
+        if (this.ballPrefab) {
+            let ballNode = instantiate(this.ballPrefab) as Node; // Instantiate the prefab
+            let ball = ballNode.getComponent(Ball); // Get the Ball component
+            if (ball) {
+                this.node.addChild(ballNode); // Add to the scene
+                ballNode.setPosition(new Vec3(CONSTS.ORIGIN_BALL_POS.x, CONSTS.ORIGIN_BALL_POS.y, CONSTS.ORIGIN_BALL_POS.z)); // Set position
+
+                // Update group to layer (if needed, based on your conversion of changeGroup method)
+                Util.changeGroup(ballNode, BALL_STATUS.UP); 
+
+                ball.closePhy(); // Call any specific methods on Ball
+                this.ballArr.push(ball); // Add to array
+            }
+        }
     }
     addBall(pos) {
         let ball = instantiate(this.ballPrefab).getComponent(Ball)
@@ -98,14 +90,15 @@ export default class Main extends Component {
     }
     checkCanShoot() {
 //      // 也可以声明一个变量，采用计数法比较
-        let canShoot = this.ballArr.every(ball => ball.node.parent.name === BALL_STATUS.UP)
-        if (canShoot) {
-        this.barrierArr.forEach(b => {
-        b.node.x += 150
-        })
-        this.addBarrier()
-        this.checkIsOver() ? this.replay() : this.isBouncing = false
-        }
+        // const BALL_STATUS_UP_LAYER = Layers.Enum.;
+        // let canShoot = this.ballArr.every(ball => ball.node.layer === BALL_STATUS.UP);
+        // if (canShoot) {
+        // this.barrierArr.forEach(b => {
+        // b.node.x += 150
+        // })
+        // this.addBarrier()
+        // this.checkIsOver() ? this.replay() : this.isBouncing = false
+        // }
     }
     replay() {
         this.removeAllBarrier()
@@ -125,20 +118,24 @@ export default class Main extends Component {
         this.ballArr.forEach(b => b.node.destroy())
     }
     checkIsOver() {
-        return this.barrierArr.some(b => b.node.y > CONSTS.ORIGIN_BALL_POS.y)
+        // return this.barrierArr.some(b => b.node.y > CONSTS.ORIGIN_BALL_POS.y)
     }
     addBarrier() {
-        let margin = 130
-        let x = - CONSTS.SCREEN_W / 2 + margin
-        while(x < CONSTS.SCREEN_W / 2 - margin) {
-        let y = -CONSTS.SCREEN_H / 2 + CONSTS.BARRIER_H + Util.random(-60, 60)
-        let gap = Util.random(100, 300)
-        let barrier = instantiate(this.barrierPrefabArr[Util.random(0, this.barrierPrefabArr.length - 1)]).getComponent(Barrier)
-        this.node.addChild(barrier.node)
-        barrier.node.x = x
-        barrier.node.y = y
-        this.barrierArr.push(barrier)
-        x += gap
+        let margin = 130;
+        let x = -CONSTS.SCREEN_W / 2 + margin;
+
+        while (x < CONSTS.SCREEN_W / 2 - margin) {
+            let y = -CONSTS.SCREEN_H / 2 + CONSTS.BARRIER_H + Util.random(-60, 60);
+            let gap = Util.random(100, 300);
+            let barrierPrefab = this.barrierPrefabArr[Util.random(0, this.barrierPrefabArr.length - 1)];
+            let barrierNode = instantiate(barrierPrefab) as Node;
+            let barrier = barrierNode.getComponent(Barrier) as Barrier;
+
+            this.node.addChild(barrierNode);
+            barrierNode.setPosition(x, y);
+
+            this.barrierArr.push(barrier);
+            x += gap;
         }
     }
     setScoreLabel() {
@@ -149,14 +146,14 @@ export default class Main extends Component {
         this.setScoreLabel()
     }
     removeBarrier(barrier: Barrier) {
-        let idx = this.barrierArr.indexOf(barrier)
+        let idx = this.barrierArr.indexOf(barrier);
         if (idx >= 0) {
-        this.barrierArr.splice(idx, 1)
-        barrier.node.removeFromParent(false)
+            this.barrierArr.splice(idx, 1);
+            barrier.node.removeFromParent(); 
         }
     }
     onDestroy() {
-        this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this)
+        this.node.off(Node.EventType.TOUCH_START, this.onTouchStart, this);
     }
 }
 
@@ -191,23 +188,23 @@ export default class Main extends Component {
 //       this.initGameData()
 //     }
 
-//     initGameData() {
-//       Game.curLevel = 1
-//       Game.mgr = this
-//       CONSTS.SCREEN_W = cc.winSize.width
-//       CONSTS.SCREEN_H = cc.winSize.height
-//       cc.loader.loadResDir('barrierPrefab', (err, assets) => {
-//         if (err) console.log(err)
-//         this.barrierPrefabArr = assets
-//         this.addBarrier()
-//         this.addTouchEvent()
-//       })
-//       cc.loader.loadRes('ball', (err, prefab) => {
-//         if (err) console.log(err)
-//         this.ballPrefab = prefab
-//         this.initBall()
-//       })
-//     }
+    // initGameData() {
+    //   Game.curLevel = 1
+    //   Game.mgr = this
+    //   CONSTS.SCREEN_W = cc.winSize.width
+    //   CONSTS.SCREEN_H = cc.winSize.height
+    //   cc.loader.loadResDir('barrierPrefab', (err, assets) => {
+    //     if (err) console.log(err)
+    //     this.barrierPrefabArr = assets
+    //     this.addBarrier()
+    //     this.addTouchEvent()
+    //   })
+    //   cc.loader.loadRes('ball', (err, prefab) => {
+    //     if (err) console.log(err)
+    //     this.ballPrefab = prefab
+    //     this.initBall()
+    //   })
+    // }
 
 //     shoot(pos) {
 //       this.ballArr.forEach((ball, i) => {
@@ -226,14 +223,14 @@ export default class Main extends Component {
 //       })
 //     }
 
-//     initBall() {
-//       let ball = cc.instantiate(this.ballPrefab).getComponent(Ball)
-//       this.node.addChild(ball.node)
-//       ball.node.position = CONSTS.ORIGIN_BALL_POS
-//       Util.changeGroup(ball.node, BALL_STATUS.UP)
-//       ball.closePhy()
-//       this.ballArr.push(ball)
-//     }
+    // initBall() {
+    //   let ball = cc.instantiate(this.ballPrefab).getComponent(Ball)
+    //   this.node.addChild(ball.node)
+    //   ball.node.position = CONSTS.ORIGIN_BALL_POS
+    //   Util.changeGroup(ball.node, BALL_STATUS.UP)
+    //   ball.closePhy()
+    //   this.ballArr.push(ball)
+    // }
 
 //     addBall(pos) {
 //       let ball = cc.instantiate(this.ballPrefab).getComponent(Ball)

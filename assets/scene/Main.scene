@@ -199,7 +199,7 @@
     "_priority": -1,
     "_fov": 60,
     "_fovAxis": 0,
-    "_orthoHeight": 448.3720930232558,
+    "_orthoHeight": 480,
     "_near": 1,
     "_far": 4096,
     "_color": {
@@ -1102,7 +1102,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -417.852,
+      "y": -414.952,
       "z": 0
     },
     "_lrot": {
@@ -1311,7 +1311,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 564.068,
+      "y": 430.98,
       "z": 0
     },
     "_lrot": {
@@ -1472,6 +1472,10 @@
     "__prefab": null,
     "scoreLabel": {
       "__id__": 40
+    },
+    "ballPrefab": {
+      "__uuid__": "4721246f-eb2c-4005-8a94-6f7570ff12a9",
+      "__expectedType__": "cc.Prefab"
     },
     "_id": "164ONFlEdLrrLqIXQpNHEd"
   },
