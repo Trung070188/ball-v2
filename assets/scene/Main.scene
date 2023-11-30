@@ -1473,6 +1473,24 @@
     "scoreLabel": {
       "__id__": 40
     },
+    "barrierPrefabArr": [
+      {
+        "__uuid__": "0f21bd10-d903-49db-b730-310279a89f72",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "51775ad7-1f84-4179-9fc9-7e0bdb0a2d82",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "c404c3df-1d82-447a-b971-b0a07e01df67",
+        "__expectedType__": "cc.Prefab"
+      },
+      {
+        "__uuid__": "ed19b35a-ae66-4903-8a68-4dc7a323ce73",
+        "__expectedType__": "cc.Prefab"
+      }
+    ],
     "ballPrefab": {
       "__uuid__": "4721246f-eb2c-4005-8a94-6f7570ff12a9",
       "__expectedType__": "cc.Prefab"

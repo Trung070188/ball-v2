@@ -9,9 +9,9 @@ export const CONSTS = {
   GROUND_H: 145,
   BARRIER_H: 300,
   WALL_H: 1080,
-  ORIGIN_BALL_POS: v3(0, 430),
-  SCREEN_H: 0,
-  SCREEN_W: 0
+  ORIGIN_BALL_POS: v3(0, 317),
+  SCREEN_H: 960,
+  SCREEN_W: 540
 }
 
 // export class CONFIG {

@@ -14,11 +14,13 @@ export default class Ball extends Component {
         let collider = this.getComponent(CircleCollider2D);
         if(collider !== null)
         {
-         collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
+        //  collider.on(Contact2DType.BEGIN_CONTACT, this.onBeginContact, this);
         }
         this.rigidBody = this.getComponent(RigidBody2D)
     }
     openPhy(linearVelocity: Vec2) {
+        console.log(linearVelocity);
+        debugger;
       if (!this.rigidBody) this.rigidBody = this.getComponent(RigidBody2D)
       this.rigidBody.enabled = true
       this.rigidBody.linearVelocity = linearVelocity
@@ -40,28 +42,28 @@ export default class Ball extends Component {
         if (l <= 0.0000001) this.rigidBody.linearVelocity = v2( Math.random() > 0.5 ? 100 : -100, 500)
     }
     update (dt) {
-        this.checkIsSleep();
-        if (!this.hitGround) return;
-        this.hitGround = false;
-        this.closePhy();
-        let dir = this.node.position.x > 0 ? 1 : -1;
-        let pos1 = this.node.position.clone();
-        let pos3 = v3(dir * (CONSTS.SCREEN_W / 2 - this.node.getComponent(UITransform).width / 2), -CONSTS.SCREEN_H / 2 + CONSTS.GROUND_H + this.node.getComponent(UITransform).height / 2);
-        let pos2 = pos1.add(pos3).divide(new Vec3(2,2,2));
-        pos2.y = pos1.y + 10;
+        // this.checkIsSleep();
+        // if (!this.hitGround) return;
+        // this.hitGround = false;
+        // this.closePhy();
+        // let dir = this.node.position.x > 0 ? 1 : -1;
+        // let pos1 = this.node.position.clone();
+        // let pos3 = v3(dir * (CONSTS.SCREEN_W / 2 - this.node.getComponent(UITransform).width / 2), -CONSTS.SCREEN_H / 2 + CONSTS.GROUND_H + this.node.getComponent(UITransform).height / 2);
+        // let pos2 = pos1.add(pos3).divide(new Vec3(2,2,2));
+        // pos2.y = pos1.y + 10;
 
-        tween(this.node)
-        .then(
-            tween().to(0.2, { position: pos3, bezier: true })
-        )
-        .to(0.4, { position: v3(dir * (CONSTS.SCREEN_W / 2 - this.node.getComponent(UITransform).width / 2), CONSTS.SCREEN_H / 2 - 30) })
-        .to(0.2, { position: v3(dir * (CONSTS.SCREEN_W / 2 - 200), CONSTS.SCREEN_H / 2 - 100) })
-        .call(() => {
-            Util.changeGroup(this.node, BALL_STATUS.UP);
-            this.openPhy(v2(0, 0));
-            Game.mgr.checkCanShoot();
-        })
-        .start();
+        // tween(this.node)
+        // .then(
+        //     tween().to(0.2, { position: pos3, bezier: true })
+        // )
+        // .to(0.4, { position: v3(dir * (CONSTS.SCREEN_W / 2 - this.node.getComponent(UITransform).width / 2), CONSTS.SCREEN_H / 2 - 30) })
+        // .to(0.2, { position: v3(dir * (CONSTS.SCREEN_W / 2 - 200), CONSTS.SCREEN_H / 2 - 100) })
+        // .call(() => {
+        //     Util.changeGroup(this.node, BALL_STATUS.UP);
+        //     this.openPhy(v2(0, 0));
+        //     Game.mgr.checkCanShoot();
+        // })
+        // .start();
 
     }
 }

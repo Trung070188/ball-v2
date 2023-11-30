@@ -12,8 +12,9 @@ import Barrier from "./Mgr/Barrier";
 export default class Main extends Component {
     @property(Label)
     scoreLabel: Label | null = null
-    ballArr: Ball[] = []
-    barrierArr: Barrier[] = []
+    ballArr: Ball[] = [];
+    barrierArr: Barrier[] = [];
+    @property([Prefab])
     barrierPrefabArr: Prefab[] = [];
     @property({type: Prefab})
     ballPrefab: Prefab | null = null
@@ -27,8 +28,8 @@ export default class Main extends Component {
             // const barrierBundle = await assetManager.loadBundle('barrierPrefab');
             // const barrierAssets = await barrierBundle.load('barrierPrefab');
             // this.barrierPrefabArr = barrierAssets as Prefab[];
-            // this.addBarrier();
-            // this.addTouchEvent();
+            this.addBarrier();
+            this.addTouchEvent();
     
             // const ballBundle = await assetManager.loadBundle('ball');
             // const ballPrefab = await ballBundle.load('ball');
@@ -41,20 +42,23 @@ export default class Main extends Component {
     
     shoot(pos) {
         this.ballArr.forEach((ball, i) => {
-        ball.closePhy()
-        this.scheduleOnce(() => {
-        tween(ball.node)
-        .to(0.1, { position: CONSTS.ORIGIN_BALL_POS })
-        .call(() => {
-        let start = ball.node.position
-        let dir = pos.sub(start)
-        ball.openPhy(dir.mul(4))
-        Util.changeGroup(ball.node, BALL_STATUS.BOUNCE)
-        })
-        .start()
-        }, i * 0.4)
-        })
+            ball.closePhy(); 
+            this.scheduleOnce(() => {
+                tween(ball.node)
+                .to(0.1, { position: CONSTS.ORIGIN_BALL_POS })
+                .call(() => {
+                    let start = ball.node.position;
+                    console.log(`start: ${start}`);
+                    let dir = pos.subtract(start);
+                    console.log(dir);
+                    ball.openPhy(dir.multiplyScalar(4)); 
+                    Util.changeGroup(ball.node, BALL_STATUS.BOUNCE);
+                })
+                .start();
+            }, i * 0.4);
+        });
     }
+    
     initBall() {
         if (this.ballPrefab) {
             let ballNode = instantiate(this.ballPrefab) as Node; // Instantiate the prefab
@@ -82,6 +86,7 @@ export default class Main extends Component {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this)
     }
     onTouchStart(e: EventTouch) {
+        console.log('check');
         if (this.isBouncing) return
         this.isBouncing = true;
         let wp = e.getUILocation();
@@ -123,11 +128,13 @@ export default class Main extends Component {
     addBarrier() {
         let margin = 130;
         let x = -CONSTS.SCREEN_W / 2 + margin;
-
+        console.log(CONSTS.SCREEN_W / 2);
+        console.log(x);
         while (x < CONSTS.SCREEN_W / 2 - margin) {
             let y = -CONSTS.SCREEN_H / 2 + CONSTS.BARRIER_H + Util.random(-60, 60);
             let gap = Util.random(100, 300);
             let barrierPrefab = this.barrierPrefabArr[Util.random(0, this.barrierPrefabArr.length - 1)];
+            console.log(barrierPrefab);
             let barrierNode = instantiate(barrierPrefab) as Node;
             let barrier = barrierNode.getComponent(Barrier) as Barrier;
 
@@ -206,22 +213,22 @@ export default class Main extends Component {
     //   })
     // }
 
-//     shoot(pos) {
-//       this.ballArr.forEach((ball, i) => {
-//         ball.closePhy()
-//         this.scheduleOnce(() => {
-//           cc.tween(ball.node)
-//           .to(0.1, { position: CONSTS.ORIGIN_BALL_POS })
-//           .call(() => {
-//               let start = ball.node.position
-//               let dir = pos.sub(start)
-//               ball.openPhy(dir.mul(4))
-//               Util.changeGroup(ball.node, BALL_STATUS.BOUNCE)
-//           })
-//           .start()
-//         }, i * 0.4)
-//       })
-//     }
+    // shoot(pos) {
+    //   this.ballArr.forEach((ball, i) => {
+    //     ball.closePhy()
+    //     this.scheduleOnce(() => {
+    //       cc.tween(ball.node)
+    //       .to(0.1, { position: CONSTS.ORIGIN_BALL_POS })
+    //       .call(() => {
+    //           let start = ball.node.position
+    //           let dir = pos.sub(start)
+    //           ball.openPhy(dir.mul(4))
+    //           Util.changeGroup(ball.node, BALL_STATUS.BOUNCE)
+    //       })
+    //       .start()
+    //     }, i * 0.4)
+    //   })
+    // }
 
     // initBall() {
     //   let ball = cc.instantiate(this.ballPrefab).getComponent(Ball)
